@@ -11,7 +11,20 @@ import {
 import Login from '../components/Authentication/Login'
 import SignUp from '../components/Authentication/SignUp'
 
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+
 const Homepage = () => {
+  const navigate = useNavigate()
+  useEffect(() => {
+    const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+
+    if (userInfo) {
+      // window.location.href = '/chats'
+      navigate('/chats')
+    }
+  }, [navigate])
+
   return (
     <Container maxW="xl" centerContent>
       <Box

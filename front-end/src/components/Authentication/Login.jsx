@@ -11,13 +11,15 @@ import {
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { useChatState } from '../../Context/ChatProvider'
+import { configAuth, config } from './configHeader'
 
 const Login = () => {
   const [email, setEmail] = useState()
   const [password, setPassword] = useState()
   const [show, setShow] = useState(false)
   const [loading, setLoading] = useState(false)
-
+  const { setUser } = useChatState()
   const toast = useToast()
   const navigate = useNavigate()
 
@@ -35,14 +37,8 @@ const Login = () => {
       setLoading(false)
       return
     }
-
+    setLoading(true)
     try {
-      const config = {
-        headers: {
-          'Content-type': 'application/json',
-        },
-      }
-
       const { data } = await axios.post(
         '/api/v1/user/login',
         { email, password },
@@ -56,9 +52,9 @@ const Login = () => {
         isClosable: true,
         position: 'bottom',
       })
-      // setUser(data)
+
+      setUser(data)
       localStorage.setItem('userInfo', JSON.stringify(data))
-      setLoading(false)
       navigate('/chats')
     } catch (error) {
       toast({
@@ -70,6 +66,12 @@ const Login = () => {
         position: 'bottom',
       })
       setLoading(false)
+    }
+  }
+
+  const onEnter = (event) => {
+    if (event.key === 'Enter') {
+      submitHandler()
     }
   }
   return (
@@ -93,6 +95,7 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             type={show ? 'text' : 'password'}
+            onKeyDown={onEnter}
           />
           <InputRightElement width={'4.5rem'}>
             <Button h="1.75rem" size="sm" onClick={handleClick}>
@@ -107,13 +110,14 @@ const Login = () => {
         width="100%"
         style={{ marginTop: 15 }}
         onClick={submitHandler}
+        isLoading={loading}
       >
         Login
       </Button>
       <Button
+        variant="solid"
         colorScheme="red"
         width="100%"
-        style={{ marginTop: 15 }}
         onClick={() => {
           setEmail('guest@example.com')
           setPassword('secret')

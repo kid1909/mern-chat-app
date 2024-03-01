@@ -2,6 +2,8 @@ import './App.css'
 // import { Button } from '@chakra-ui/button'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { HomePage, ChatPage } from './pages'
+import Error from './pages/Error'
+
 function App() {
   const router = createBrowserRouter([
     {
@@ -9,8 +11,9 @@ function App() {
       element: <HomePage />,
     },
     {
-      path: '/chat',
+      path: '/chats',
       element: <ChatPage />,
+      errorElement: <Error />,
     },
   ])
 
